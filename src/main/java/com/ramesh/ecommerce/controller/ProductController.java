@@ -1,7 +1,10 @@
 package com.ramesh.ecommerce.controller;
 
+import com.ramesh.ecommerce.dto.ProductRequestDTO;
 import com.ramesh.ecommerce.model.Product;
 import com.ramesh.ecommerce.service.ProductService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,21 +21,56 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> getAllProducts()
+    public ResponseEntity<List<Product>> getAllProducts()
     {
-        return productService.getAllProducts();
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id)
+    public ResponseEntity<Product> getProductById(@PathVariable Long id)
     {
-        return productService.getProductById(id);
+
+        if( productService.getProductById(id)==null)
+        {
+           return ResponseEntity.notFound().build();
+        }
+
+        return  ResponseEntity.ok(productService.getProductById(id));
     }
 
     @PostMapping
-    public Product addProduct(@RequestBody Product product)
+    public ResponseEntity<Product> addProduct(@Valid @RequestBody ProductRequestDTO dto)
     {
-        return productService.addProduct(product);
+        Product product=productService.addProduct(dto);
+        return ResponseEntity.status(201).body(product);
+        //return productService.addProduct(product);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id,@Valid @RequestBody ProductRequestDTO dto)
+    {
+
+        Product updatedProduct=productService.updateProduct(id,dto);
+        if(updatedProduct==null)
+        {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(updatedProduct);
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProductById(@PathVariable Long id)
+    {
+        boolean ans = productService.deleteProductById(id);
+        if(!ans)
+        {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.noContent().build();
+    }
+
 
 }
