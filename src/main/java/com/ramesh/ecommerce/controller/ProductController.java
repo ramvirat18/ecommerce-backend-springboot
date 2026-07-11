@@ -30,10 +30,10 @@ public class ProductController {
     public ResponseEntity<Product> getProductById(@PathVariable Long id)
     {
 
-        if( productService.getProductById(id)==null)
-        {
-           return ResponseEntity.notFound().build();
-        }
+//        if( productService.getProductById(id)==null)
+//        {
+//           return ResponseEntity.notFound().build();
+//        }
 
         return  ResponseEntity.ok(productService.getProductById(id));
     }
@@ -51,10 +51,10 @@ public class ProductController {
     {
 
         Product updatedProduct=productService.updateProduct(id,dto);
-        if(updatedProduct==null)
-        {
-            return ResponseEntity.notFound().build();
-        }
+//        if(updatedProduct==null)
+//        {
+//            return ResponseEntity.notFound().build();
+//        }
 
         return ResponseEntity.ok(updatedProduct);
 

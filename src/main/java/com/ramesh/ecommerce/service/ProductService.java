@@ -2,64 +2,68 @@ package com.ramesh.ecommerce.service;
 
 import com.ramesh.ecommerce.dto.ProductRequestDTO;
 import com.ramesh.ecommerce.model.Product;
+import com.ramesh.ecommerce.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
-    private List<Product> products = new ArrayList<>();
-    private Long nextId=3L;
+    private final ProductRepository productRepository;
 
-    public ProductService()
-    {
-        products.add(new Product(1L,"Laptop",50000.00));
-        products.add(new Product(2L,"phone",30000.00));
-    }
+
+
+
+
 
     public List<Product> getAllProducts()
     {
-        return products;
+        return productRepository.findAll();
     }
 
     public Product getProductById(Long id)
     {
 
 
-         return products.stream()
-            .filter(p -> p.getId().equals(id))
-            .findFirst()
-            .orElse(null);
+         return productRepository.findById(id).
+                 orElseThrow(()-> new RuntimeException("Id is not found"));
     }
 
     public Product addProduct(ProductRequestDTO dto)
     {
 
-        Product product = new Product(nextId++,dto.getName(),dto.getPrice());
-        products.add(product);
-        return product;
+        Product product = new Product();
+        product.setName(dto.getName());
+        product.setPrice(dto.getPrice());
+
+        return productRepository.save(product);
     }
 
     public Product updateProduct(Long id, ProductRequestDTO dto)
     {
-        Product product = getProductById(id);
-        if(product==null)
-        {
-            return null;
-        }
+        Product ExistingProduct = productRepository.findById(id)
+                        .orElseThrow(()->new RuntimeException("Id is not present in the db"));
 
-        product.setName(dto.getName());
-        product.setPrice(dto.getPrice());
-        return product;
+
+
+        ExistingProduct.setName(dto.getName());
+        ExistingProduct.setPrice(dto.getPrice());
+        return productRepository.save(ExistingProduct) ;
     }
 
     public boolean deleteProductById(Long id)
     {
-        return products.removeIf(
-                p->p.getId().equals(id)
-        );
+        if( !productRepository.existsById(id))
+        {
+            return false;
+        }
+
+        productRepository.deleteById(id);
+        return true;
     }
 
 
