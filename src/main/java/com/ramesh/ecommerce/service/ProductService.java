@@ -1,7 +1,9 @@
 package com.ramesh.ecommerce.service;
 
 import com.ramesh.ecommerce.dto.ProductRequestDTO;
+import com.ramesh.ecommerce.model.Category;
 import com.ramesh.ecommerce.model.Product;
+import com.ramesh.ecommerce.repository.CategoryRepository;
 import com.ramesh.ecommerce.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,7 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
-
+    private final CategoryRepository categoryRepository;
 
 
 
@@ -35,10 +37,11 @@ public class ProductService {
 
     public Product addProduct(ProductRequestDTO dto)
     {
-
+        Category category = categoryRepository.findById(dto.getCategory_id()).orElseThrow(()-> new RuntimeException("Category not found"));
         Product product = new Product();
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
+        product.setCategory(category);
 
         return productRepository.save(product);
     }
@@ -52,6 +55,8 @@ public class ProductService {
 
         ExistingProduct.setName(dto.getName());
         ExistingProduct.setPrice(dto.getPrice());
+
+        ExistingProduct.setCategory(categoryRepository.findById(dto.getCategory_id()).orElseThrow(()->new RuntimeException("Category is not found")));
         return productRepository.save(ExistingProduct) ;
     }
 

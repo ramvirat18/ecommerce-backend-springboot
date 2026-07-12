@@ -1,31 +1,31 @@
 package com.ramesh.ecommerce.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
-@Table(name = "products")
-@Getter
+@Table(name = "categories")
 @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private double price;
 
-    @JsonBackReference
-    @ManyToOne(
-            fetch = FetchType.EAGER
-    )
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "category",fetch = FetchType.LAZY)
+    private List<Product> products;
+
+
 
 }
