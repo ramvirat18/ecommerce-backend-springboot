@@ -1,6 +1,7 @@
 package com.ramesh.ecommerce.service;
 
 import com.ramesh.ecommerce.dto.CategoryRequestDTO;
+import com.ramesh.ecommerce.exception.ResourceNotFoundException;
 import com.ramesh.ecommerce.model.Category;
 import com.ramesh.ecommerce.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +27,11 @@ public class CategoryService {
     {
         return repository.findAll();
     }
+
+    public Category getCategoryById(Long id)
+    {
+        return repository.findById(id).orElseThrow(()->new ResourceNotFoundException("Category with id "+id+" is not found"));
+    }
+
 
 }

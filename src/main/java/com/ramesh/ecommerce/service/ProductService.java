@@ -1,6 +1,7 @@
 package com.ramesh.ecommerce.service;
 
 import com.ramesh.ecommerce.dto.ProductRequestDTO;
+import com.ramesh.ecommerce.exception.ResourceNotFoundException;
 import com.ramesh.ecommerce.model.Category;
 import com.ramesh.ecommerce.model.Product;
 import com.ramesh.ecommerce.repository.CategoryRepository;
@@ -32,12 +33,14 @@ public class ProductService {
 
 
          return productRepository.findById(id).
-                 orElseThrow(()-> new RuntimeException("Id is not found"));
+                 orElseThrow(()-> new  ResourceNotFoundException("Product with id "
+                         + id +
+                         " not found"));
     }
 
     public Product addProduct(ProductRequestDTO dto)
     {
-        Category category = categoryRepository.findById(dto.getCategory_id()).orElseThrow(()-> new RuntimeException("Category not found"));
+        Category category = categoryRepository.findById(dto.getCategory_id()).orElseThrow(()-> new ResourceNotFoundException("Category not found"));
         Product product = new Product();
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
@@ -49,14 +52,14 @@ public class ProductService {
     public Product updateProduct(Long id, ProductRequestDTO dto)
     {
         Product ExistingProduct = productRepository.findById(id)
-                        .orElseThrow(()->new RuntimeException("Id is not present in the db"));
+                        .orElseThrow(()->new  ResourceNotFoundException("Product is not present in the db"));
 
 
 
         ExistingProduct.setName(dto.getName());
         ExistingProduct.setPrice(dto.getPrice());
 
-        ExistingProduct.setCategory(categoryRepository.findById(dto.getCategory_id()).orElseThrow(()->new RuntimeException("Category is not found")));
+        ExistingProduct.setCategory(categoryRepository.findById(dto.getCategory_id()).orElseThrow(()->new  ResourceNotFoundException(" Product Category is not found")));
         return productRepository.save(ExistingProduct) ;
     }
 
