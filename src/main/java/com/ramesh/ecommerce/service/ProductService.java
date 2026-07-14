@@ -7,9 +7,12 @@ import com.ramesh.ecommerce.model.Product;
 import com.ramesh.ecommerce.repository.CategoryRepository;
 import com.ramesh.ecommerce.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,10 +26,20 @@ public class ProductService {
 
 
 
-    public List<Product> getAllProducts()
+    public Page<Product> getAllProducts(int page, int size,String sortBy, String direction)
     {
-        return productRepository.findAll();
+        Sort sort = direction.equalsIgnoreCase("desc")?Sort.by(sortBy).descending():Sort.by(sortBy).ascending();
+        Pageable pageable= PageRequest.of(page,size,sort);
+        return productRepository.findAll(pageable);
     }
+
+
+
+    public List<Product> searchProduct(String keyword)
+    {
+        return productRepository.findByNameContainingIgnoreCase(keyword);
+    }
+
 
     public Product getProductById(Long id)
     {

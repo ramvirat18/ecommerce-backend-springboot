@@ -4,6 +4,7 @@ import com.ramesh.ecommerce.dto.ProductRequestDTO;
 import com.ramesh.ecommerce.model.Product;
 import com.ramesh.ecommerce.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,21 +21,25 @@ public class ProductController {
         this.productService=productService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts()
+    @GetMapping()
+    public ResponseEntity<Page<Product>> getAllProducts(@RequestParam int page, @RequestParam int size,@RequestParam String sortBy,@RequestParam String direction)
     {
-        return ResponseEntity.ok(productService.getAllProducts());
+        return ResponseEntity.ok(productService.getAllProducts(page,size,sortBy,direction));
     }
+
+
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Product>> searchProduct(@RequestParam String keyword)
+    {
+        return ResponseEntity.ok(productService.searchProduct(keyword));
+    }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id)
     {
-
-//        if( productService.getProductById(id)==null)
-//        {
-//           return ResponseEntity.notFound().build();
-//        }
-
         return  ResponseEntity.ok(productService.getProductById(id));
     }
 
@@ -51,10 +56,7 @@ public class ProductController {
     {
 
         Product updatedProduct=productService.updateProduct(id,dto);
-//        if(updatedProduct==null)
-//        {
-//            return ResponseEntity.notFound().build();
-//        }
+
 
         return ResponseEntity.ok(updatedProduct);
 
