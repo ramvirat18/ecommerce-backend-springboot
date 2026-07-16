@@ -87,5 +87,23 @@ public class ProductService {
         return true;
     }
 
+    public List<Product> getProductsBycategory(Long categoryId)
+    {
+
+        return productRepository.findByCategoryId(categoryId);
+    }
+
+    public List<Product> getProductsInRange(Double minPrice, Double maxPrice)
+    {
+        return productRepository.findByPriceBetween(minPrice,maxPrice);
+    }
+
+    public List<Product> filterProducts(Long categoryId, Double minPrice,Double maxPrice)
+    {
+        return productRepository.filterProducts(categoryId,minPrice,maxPrice);
+    }
+
+
+
 
 }

@@ -74,5 +74,24 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable Long categoryId)
+    {
+        return ResponseEntity.ok(productService.getProductsBycategory(categoryId));
+    }
+
+    @GetMapping("/price-range")
+    public ResponseEntity<List<Product>> getProductsInRange(@RequestParam Double minPrice, Double maxPrice)
+    {
+        return ResponseEntity.ok(productService.getProductsInRange(minPrice,maxPrice));
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<Product>> getExpensiveProducts(@RequestParam Long categoryId, @RequestParam Double minPrice ,@RequestParam Double maxPrice)
+    {
+        return ResponseEntity.ok(productService.filterProducts(categoryId,minPrice,maxPrice));
+    }
+
+
 
 }
