@@ -1,6 +1,7 @@
 package com.ramesh.ecommerce.service;
 
 import com.ramesh.ecommerce.dto.ProductRequestDTO;
+import com.ramesh.ecommerce.dto.ProductResponseDTO;
 import com.ramesh.ecommerce.exception.ResourceNotFoundException;
 import com.ramesh.ecommerce.model.Category;
 import com.ramesh.ecommerce.model.Product;
@@ -26,32 +27,39 @@ public class ProductService {
 
 
 
-    public Page<Product> getAllProducts(int page, int size,String sortBy, String direction)
+    public Page<ProductResponseDTO> getAllProducts(int page, int size,String sortBy, String direction)
     {
         Sort sort = direction.equalsIgnoreCase("desc")?Sort.by(sortBy).descending():Sort.by(sortBy).ascending();
         Pageable pageable= PageRequest.of(page,size,sort);
-        return productRepository.findAll(pageable);
+        return productRepository.findAll(pageable)
+                .map(this::convertToDTO);
+
     }
 
 
 
-    public List<Product> searchProduct(String keyword)
+    public List<ProductResponseDTO> searchProduct(String keyword)
     {
-        return productRepository.findByNameContainingIgnoreCase(keyword);
+        return productRepository.findByNameContainingIgnoreCase(keyword)
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 
 
-    public Product getProductById(Long id)
+    public ProductResponseDTO getProductById(Long id)
     {
 
 
-         return productRepository.findById(id).
+         Product product = productRepository.findById(id).
                  orElseThrow(()-> new  ResourceNotFoundException("Product with id "
                          + id +
                          " not found"));
+
+         return convertToDTO(product);
     }
 
-    public Product addProduct(ProductRequestDTO dto)
+    public ProductResponseDTO addProduct(ProductRequestDTO dto)
     {
         Category category = categoryRepository.findById(dto.getCategory_id()).orElseThrow(()-> new ResourceNotFoundException("Category not found"));
         Product product = new Product();
@@ -59,10 +67,11 @@ public class ProductService {
         product.setPrice(dto.getPrice());
         product.setCategory(category);
 
-        return productRepository.save(product);
+        Product addedProduct = productRepository.save(product);
+        return convertToDTO(addedProduct);
     }
 
-    public Product updateProduct(Long id, ProductRequestDTO dto)
+    public ProductResponseDTO updateProduct(Long id, ProductRequestDTO dto)
     {
         Product ExistingProduct = productRepository.findById(id)
                         .orElseThrow(()->new  ResourceNotFoundException("Product is not present in the db"));
@@ -73,7 +82,8 @@ public class ProductService {
         ExistingProduct.setPrice(dto.getPrice());
 
         ExistingProduct.setCategory(categoryRepository.findById(dto.getCategory_id()).orElseThrow(()->new  ResourceNotFoundException(" Product Category is not found")));
-        return productRepository.save(ExistingProduct) ;
+        Product updatedProduct= productRepository.save(ExistingProduct) ;
+        return convertToDTO(updatedProduct);
     }
 
     public boolean deleteProductById(Long id)
@@ -87,23 +97,41 @@ public class ProductService {
         return true;
     }
 
-    public List<Product> getProductsBycategory(Long categoryId)
+    public List<ProductResponseDTO> getProductsBycategory(Long categoryId)
     {
 
-        return productRepository.findByCategoryId(categoryId);
+        return productRepository.findByCategoryId(categoryId)
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 
-    public List<Product> getProductsInRange(Double minPrice, Double maxPrice)
+    public List<ProductResponseDTO> getProductsInRange(Double minPrice, Double maxPrice)
     {
-        return productRepository.findByPriceBetween(minPrice,maxPrice);
+        return productRepository.findByPriceBetween(minPrice,maxPrice)
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 
-    public List<Product> filterProducts(Long categoryId, Double minPrice,Double maxPrice)
+    public List<ProductResponseDTO> filterProducts(Long categoryId, Double minPrice,Double maxPrice)
     {
-        return productRepository.filterProducts(categoryId,minPrice,maxPrice);
+        return productRepository.filterProducts(categoryId,minPrice,maxPrice)
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 
 
+    public ProductResponseDTO convertToDTO(Product product)
+    {
+        return ProductResponseDTO.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .categoryName(product.getCategory().getName())
+                .build();
+    }
 
 
 }

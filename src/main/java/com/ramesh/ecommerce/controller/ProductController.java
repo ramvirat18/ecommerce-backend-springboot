@@ -1,6 +1,7 @@
 package com.ramesh.ecommerce.controller;
 
 import com.ramesh.ecommerce.dto.ProductRequestDTO;
+import com.ramesh.ecommerce.dto.ProductResponseDTO;
 import com.ramesh.ecommerce.model.Product;
 import com.ramesh.ecommerce.service.ProductService;
 import jakarta.validation.Valid;
@@ -22,7 +23,7 @@ public class ProductController {
     }
 
     @GetMapping()
-    public ResponseEntity<Page<Product>> getAllProducts(@RequestParam int page, @RequestParam int size,@RequestParam String sortBy,@RequestParam String direction)
+    public ResponseEntity<Page<ProductResponseDTO>> getAllProducts(@RequestParam int page, @RequestParam int size,@RequestParam String sortBy,@RequestParam String direction)
     {
         return ResponseEntity.ok(productService.getAllProducts(page,size,sortBy,direction));
     }
@@ -30,7 +31,7 @@ public class ProductController {
 
 
     @GetMapping("/search")
-    public ResponseEntity<List<Product>> searchProduct(@RequestParam String keyword)
+    public ResponseEntity<List<ProductResponseDTO>> searchProduct(@RequestParam String keyword)
     {
         return ResponseEntity.ok(productService.searchProduct(keyword));
     }
@@ -38,24 +39,24 @@ public class ProductController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id)
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable Long id)
     {
         return  ResponseEntity.ok(productService.getProductById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Product> addProduct(@Valid @RequestBody ProductRequestDTO dto)
+    public ResponseEntity<ProductResponseDTO> addProduct(@Valid @RequestBody ProductRequestDTO dto)
     {
-        Product product=productService.addProduct(dto);
-        return ResponseEntity.status(201).body(product);
+        ProductResponseDTO responseDTO=productService.addProduct(dto);
+        return ResponseEntity.status(201).body(responseDTO);
         //return productService.addProduct(product);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id,@Valid @RequestBody ProductRequestDTO dto)
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long id,@Valid @RequestBody ProductRequestDTO dto)
     {
 
-        Product updatedProduct=productService.updateProduct(id,dto);
+        ProductResponseDTO updatedProduct=productService.updateProduct(id,dto);
 
 
         return ResponseEntity.ok(updatedProduct);
@@ -75,19 +76,19 @@ public class ProductController {
     }
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable Long categoryId)
+    public ResponseEntity<List<ProductResponseDTO>> getProductsByCategory(@PathVariable Long categoryId)
     {
         return ResponseEntity.ok(productService.getProductsBycategory(categoryId));
     }
 
     @GetMapping("/price-range")
-    public ResponseEntity<List<Product>> getProductsInRange(@RequestParam Double minPrice, Double maxPrice)
+    public ResponseEntity<List<ProductResponseDTO>> getProductsInRange(@RequestParam Double minPrice, Double maxPrice)
     {
         return ResponseEntity.ok(productService.getProductsInRange(minPrice,maxPrice));
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<Product>> getExpensiveProducts(@RequestParam Long categoryId, @RequestParam Double minPrice ,@RequestParam Double maxPrice)
+    public ResponseEntity<List<ProductResponseDTO>> filterProducts(@RequestParam Long categoryId, @RequestParam Double minPrice ,@RequestParam Double maxPrice)
     {
         return ResponseEntity.ok(productService.filterProducts(categoryId,minPrice,maxPrice));
     }
