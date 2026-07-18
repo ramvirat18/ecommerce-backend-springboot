@@ -2,6 +2,8 @@ package com.ramesh.ecommerce.service;
 
 import com.ramesh.ecommerce.dto.ProductRequestDTO;
 import com.ramesh.ecommerce.dto.ProductResponseDTO;
+import com.ramesh.ecommerce.exception.CategoryNotFoundException;
+import com.ramesh.ecommerce.exception.ProductNotFoundException;
 import com.ramesh.ecommerce.exception.ResourceNotFoundException;
 import com.ramesh.ecommerce.model.Category;
 import com.ramesh.ecommerce.model.Product;
@@ -52,7 +54,7 @@ public class ProductService {
 
 
          Product product = productRepository.findById(id).
-                 orElseThrow(()-> new  ResourceNotFoundException("Product with id "
+                 orElseThrow(()-> new ProductNotFoundException("Product with id "
                          + id +
                          " not found"));
 
@@ -61,7 +63,7 @@ public class ProductService {
 
     public ProductResponseDTO addProduct(ProductRequestDTO dto)
     {
-        Category category = categoryRepository.findById(dto.getCategory_id()).orElseThrow(()-> new ResourceNotFoundException("Category not found"));
+        Category category = categoryRepository.findById(dto.getCategory_id()).orElseThrow(()-> new CategoryNotFoundException("Category with id "+dto.getCategory_id()+" is not found"));
         Product product = new Product();
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
@@ -74,14 +76,14 @@ public class ProductService {
     public ProductResponseDTO updateProduct(Long id, ProductRequestDTO dto)
     {
         Product ExistingProduct = productRepository.findById(id)
-                        .orElseThrow(()->new  ResourceNotFoundException("Product is not present in the db"));
+                        .orElseThrow(()->new ProductNotFoundException("Product with id " + id + " is not found"));
 
 
 
         ExistingProduct.setName(dto.getName());
         ExistingProduct.setPrice(dto.getPrice());
 
-        ExistingProduct.setCategory(categoryRepository.findById(dto.getCategory_id()).orElseThrow(()->new  ResourceNotFoundException(" Product Category is not found")));
+        ExistingProduct.setCategory(categoryRepository.findById(dto.getCategory_id()).orElseThrow(()->new CategoryNotFoundException("Category with id "+dto.getCategory_id()+" is not found")));
         Product updatedProduct= productRepository.save(ExistingProduct) ;
         return convertToDTO(updatedProduct);
     }
