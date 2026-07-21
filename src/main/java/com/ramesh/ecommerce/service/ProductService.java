@@ -4,7 +4,6 @@ import com.ramesh.ecommerce.dto.ProductRequestDTO;
 import com.ramesh.ecommerce.dto.ProductResponseDTO;
 import com.ramesh.ecommerce.exception.CategoryNotFoundException;
 import com.ramesh.ecommerce.exception.ProductNotFoundException;
-import com.ramesh.ecommerce.exception.ResourceNotFoundException;
 import com.ramesh.ecommerce.model.Category;
 import com.ramesh.ecommerce.model.Product;
 import com.ramesh.ecommerce.repository.CategoryRepository;
