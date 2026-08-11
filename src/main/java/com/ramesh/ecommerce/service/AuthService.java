@@ -3,6 +3,7 @@ package com.ramesh.ecommerce.service;
 
 import com.ramesh.ecommerce.dto.RegisterRequestDTO;
 import com.ramesh.ecommerce.dto.RegisterResponseDTO;
+import com.ramesh.ecommerce.exception.ProductNotFoundException;
 import com.ramesh.ecommerce.model.Role;
 import com.ramesh.ecommerce.model.User;
 import com.ramesh.ecommerce.repository.UserRepository;
@@ -21,7 +22,7 @@ public class AuthService {
     {
         if(userRepository.findByEmail(dto.getEmail()).isPresent())
         {
-            throw new RuntimeException("Email is already present");
+            throw new RuntimeException ("Email is already present");
         }
 
         User user = User.builder().
