@@ -135,4 +135,8 @@ public class ProductService {
     }
 
 
+    public List<ProductResponseDTO> getAllProducts() {
+
+        return productRepository.findAll().stream().map(this::convertToDTO).toList();
+    }
 }

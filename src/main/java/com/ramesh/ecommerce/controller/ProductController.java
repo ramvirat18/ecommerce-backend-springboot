@@ -33,10 +33,12 @@ public class ProductController {
     description = "Returns paginated List of Products")
     @ApiResponse(responseCode ="200",description = "returns the paginated list of products")
     @GetMapping()
-    public ResponseEntity<Page<ProductResponseDTO>> getAllProducts(@RequestParam int page, @RequestParam int size,@RequestParam String sortBy,@RequestParam String direction)
+    public ResponseEntity<Page<ProductResponseDTO>> getAllPaginatedProducts(@RequestParam int page, @RequestParam int size,@RequestParam String sortBy,@RequestParam String direction)
     {
         return ResponseEntity.ok(productService.getAllProducts(page,size,sortBy,direction));
     }
+
+
 
 
 @Operation(summary = "Search Products",
